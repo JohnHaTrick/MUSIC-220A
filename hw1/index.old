@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>
+      Homework 1: Alsterda, John
+    </title>
+  </head>
+  <body>
+    I can type something here
+    <script>
+      const start = () => {
+        // create web audio api context
+        audioCtx = new AudioContext();
+	
+	// create new osciallator
+	//osc = audioCtx.createOscillator();
+	osc = new OscillatorNode();
+	osc.connect(audioCtx.destination);
+
+	// gain
+	gain = audioCtx.createGain();
+        //gain.value = 10;
+        osc.connect(gain)
+
+	osc.start();
+      };
+      document.body.addEventListener('click', start);
+      //document.body.addEventListener('click', start, {once: true});
+    </script>
+  </body>
+</html>
