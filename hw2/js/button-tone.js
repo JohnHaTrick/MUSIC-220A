@@ -1,19 +1,23 @@
+import { getArrays } from './load-data.js';
+
 // J Alsterda javascript for M220a hw1
 // play a series of frequencies on click
 const start = (beats_mode) => {
-    console.log("hello world");
+    console.log("print frequency array:");
+    //array = getArray	
+    console.log(getArrays());
 
     // create web audio api context
     const context = new AudioContext();
 
     // define frequencies, gains, & play periods
-    freqs   = [ 220, 440, 660 ];
-    gains   = [ 0.3, 0.2, 0.1 ]; // make function 1/freq?
-    t_start = [ 0.0, 0.5, 1.0 ];
-    t_stop  = [ 0.5, 1.0, 1.5 ];
+    var freqs   = [ 220, 440, 660 ];
+    var gains   = [ 0.3, 0.2, 0.1 ]; // make function 1/freq?
+    var t_start = [ 0.0, 0.5, 1.0 ];
+    var t_stop  = [ 0.5, 1.0, 1.5 ];
 
     // make beat frequencies?
-    beat_freq  = 4;
+    var beat_freq  = 4;
     if (beats_mode == "yes") {
         freqs.forEach((val,idx) => {
             freqs.push(   freqs[idx] + beat_freq );
@@ -47,7 +51,5 @@ const start = (beats_mode) => {
 };
 
 // click -> make sound
-document.querySelector('#sustain')
-        .addEventListener('click',function(){start("no");});
-document.querySelector('#beating')
+document.querySelector('#cmpc')
         .addEventListener('click',function(){start("yes");});
