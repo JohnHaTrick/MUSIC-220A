@@ -66,14 +66,14 @@ subplot(2,1,2); hold on;
     xlabel('f [Hz]'); ylabel('amplitude');
 %     xlim([0 1]);
 
-%% save as json datafile
-f_dom_json = jsonencode(f_dom);
+%% save data
+f_dom_json = jsonencode(f_dom);             % as json
 P1_n_json  = jsonencode(P1_n);
 P1_c_json  = jsonencode(P1_c);
 save('frequencies.json',     'f_dom_json');
 save('nominal_cmds.json',    'P1_n_json');
 save('contingency_cmds.json','P1_c_json');
 
-% csvwrite('frequencies.csv',      f_dom);
-% csvwrite('nominal_cmds.csv',     P1_n );
-% csvwrite('contingency_cmds.csv', P1_c );
+csvwrite('frequencies.csv',      f_dom);    % as csv
+csvwrite('nominal_cmds.csv',     P1_n );
+csvwrite('contingency_cmds.csv', P1_c );
