@@ -44,8 +44,6 @@ subplot(2,1,1); hold on;                    % plot the raw signals
     ylabel('steer cmd');
 
 %% calculate FFT
-
-
 FFT_n         = fft(u_n(idx,:)', ...         % just for idx for now
                     up_samp*length(u_n(idx,:)));
 P2_n          = abs(FFT_n/samp_N);
@@ -58,16 +56,13 @@ P2_c          = abs(FFT_c/samp_N);
 P1_c          = P2_c(1:samp_N/2+1);
 P1_c(2:end-1) = 2*P1_c(2:end-1);
 
-% f_dom_audible = f_dom*800;
-
 subplot(2,1,2); hold on;
     plot(f_dom(1:length(P1_n)),P1_n)
     plot(f_dom(1:length(P1_n)),P1_c)
     xlabel('f [Hz]'); ylabel('amplitude');
-%     xlim([0 1]);
 
 %% save data
-data.freqs  = f_dom;
+data.freqs  = f_dom(1:length(P1_n))';
 data.amps_n = P1_n;
 data.amps_c = P1_c;
 
