@@ -58,7 +58,7 @@ P2_c          = abs(FFT_c/samp_N);
 P1_c          = P2_c(1:samp_N/2+1);
 P1_c(2:end-1) = 2*P1_c(2:end-1);
 
-f_dom_audible = f_dom*800;
+% f_dom_audible = f_dom*800;
 
 subplot(2,1,2); hold on;
     plot(f_dom(1:length(P1_n)),P1_n)
@@ -67,13 +67,22 @@ subplot(2,1,2); hold on;
 %     xlim([0 1]);
 
 %% save data
-f_dom_json = jsonencode(f_dom);             % as json
-P1_n_json  = jsonencode(P1_n);
-P1_c_json  = jsonencode(P1_c);
-save('frequencies.json',     'f_dom_json');
-save('nominal_cmds.json',    'P1_n_json');
-save('contingency_cmds.json','P1_c_json');
+data.freqs  = f_dom;
+data.amps_n = P1_n;
+data.amps_c = P1_c;
 
-csvwrite('frequencies.csv',      f_dom);    % as csv
-csvwrite('nominal_cmds.csv',     P1_n );
-csvwrite('contingency_cmds.csv', P1_c );
+fileID = fopen('dataset.js','w');
+fprintf(fileID,strcat('export const data = ',jsonencode(data)));
+fprintf(fileID, '\nexport default data');
+fclose(fileID);
+
+% f_dom_json = jsonencode(f_dom);             % as json
+% P1_n_json  = jsonencode(P1_n);
+% P1_c_json  = jsonencode(P1_c);
+% save('frequencies.json',     'f_dom_json');
+% save('nominal_cmds.json',    'P1_n_json');
+% save('contingency_cmds.json','P1_c_json');
+% 
+% csvwrite('frequencies.csv',      f_dom);    % as csv
+% csvwrite('nominal_cmds.csv',     P1_n );
+% csvwrite('contingency_cmds.csv', P1_c );
