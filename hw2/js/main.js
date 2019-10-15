@@ -1,4 +1,6 @@
-import data         from '../data/dataset.js';
+import frequencies  from '../data/frequency-data.js';
+import amplitudes_n from '../data/nominal-amp-data.js';
+import amplitudes_c from '../data/contingency-amp-data.js';
 import TSDataPlayer from './TSDataPlayer.js';
 
 /* J Alsterda main javascript for M220a hw2

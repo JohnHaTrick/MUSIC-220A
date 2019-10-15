@@ -4,22 +4,35 @@
     <title> HW2: J. Alsterda, Contingency Planning </title>
   </head>
   <body><p>
+    Click to hear steering command plans for my self-driving car!
+      <br />
+    <button id ="dmpc">
+      Play FFT for nominal plan only</button><br />
+    <button id ="cmpc">
+      Play FFT for contingency plan only</button><br />
+    <button id ="cdmpc">
+      Play FFT for both plans simulaneously</button><br />
 
-    Click to hear steering commands for an automated vehicle<br />
+    Two plans are being maintained simulataneously:
+      <br />
+    a nominal plan and a an emergency avoidance plan.
+      <br />
+    They converge as the emergency occurs.
+      <br /><br />
 
-    <button id ="dmpc"> Play FFT for nominal plan only</button><br />
-    <button id ="cmpc"> Play FFT for contingency plan only</button><br />
-    <button id ="cdmpc">Play FFT for both plans simulaneously</button><br />
+    Follow the link below to see Contingency Planning in action:
+      <br />
+    <a href="https://www.youtube.com/watch?v=OwW9gOE-kLg">
+      Contingency Planning for Pedestrian Avoidance</a>
 
-    Two plans are being maintained simulataneously:<br />
-    a nominal plan and a an emergency avoidance plan.<br />
-    They converge as the emergency occurs.<br /><br />
-
-    Follow the link below to see Contingency Planning in action:<br />
-    <a href="https://www.youtube.com/watch?v=OwW9gOE-kLg">Contingency Planning for Pedestrian Avoidance</a>
-
-    <script type="module" src="js/button-tone.js"></script>
-    <script type="module" src="data/dataset.js">  </script>
+    <script type="module" src="js/main.js">
+      </script>
+    <script type="module" src="data/frequency-data.js">
+      </script>
+    <script type="module" src="data/nominal-amp-data.js">
+      </script>
+    <script type="module" src="data/contingency-amp-data.js">
+      </script>
 
   </p></body>
 </html>
