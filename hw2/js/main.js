@@ -13,37 +13,35 @@ import TSDataPlayer from './TSDataPlayer.js';
  * Playing both tones simulataneously illustrates the dissonance present when the
  *   two plans differ considerably. When the obstacle appears, both plans agree --
  *   and thus the total sounds becomes more consonant.
+ *
+ * Mapping function written in script data/FFT_cmpc.m. Data passed to this script
+ *   has already been mapped to frequencies and amplitudes.
 */
-
-// initialize top-level audio-context objects
-const context = new AudioContext();     // create web audio api context
-const master  = new GainNode(context);  //   and master volume gain
+                                              // Initialize audio-context objects
+const context = new AudioContext();           //   create web audio api context
+const master  = new GainNode(context);        //   and master volume gain
 master.connect(context.destination);
 master.gain.value = 1;
+                                              // Parameters
+const BPM        = 60; //* 50;     1Hz!       //   60 sec/min; 50 Hz
+const num_freqs  = frequencies.length;        //   FFT bins
+const num_TS     = amplitudes_n[0].length;    //   how many time-steps in the data
+const j_idxs     = [];                        //   array from 0:num_TS-1
+const duration   = 3;                         //   each mpc plan is 3 sec
+const freq_scale = 10000;                     //   scale FFT freqs to audible range
 
-// Parameters
-const BPM        = 60; //* 50;     1Hz!       // 60 sec/min; 50 Hz
-const num_freqs  = frequencies.length;        // FFT bins
-const num_TS     = amplitudes_n[0].length;    // how many time-steps in the data
-const j_idxs     = [];                        // array from 0:num_TS-1
-const duration   = 3;                         // each mpc plan is 3 sec
-const freq_scale = 10000;                     // scale FFT freqs to audible range
-
-// Scale frequencies
-for( var i=0; i<num_freqs; i++ ) {
+for( var i=0; i<num_freqs; i++ ) {            // Scale frequencies
     frequencies[i] *= freq_scale * frequencies[i];
 }
 
-// fill j idx array
-for( var j=0; j<num_TS; j++ ) {
+for( var j=0; j<num_TS; j++ ) {               // fill j idx array
     j_idxs.push(j);
 }
 
-// Construct oscillators
-const osc_n = [];
-const osc_c = [];
-const amp_n = [];
-const amp_c = [];
+const osc_n = [];                             // Construct oscillators
+const osc_c = [];                             //   need oscillators & amps for:
+const amp_n = [];                             //   2 signals (nominal & contingency),
+const amp_c = [];                             //   all freqs, & all timesteps
 for(     var i=0; i<num_freqs; i++ ) {
     osc_n[i] = [];
     osc_c[i] = [];
@@ -67,9 +65,7 @@ for(     var i=0; i<num_freqs; i++ ) {
     }
 }
 
-// my trigger functions: ramp up and down the gains for timestep j
-function nom_trigger(j, start) {
-    console.log('j = ',j);
+function nom_trigger(j, start) {              // ramp up & down gain for timestep j
     for( var i=0; i<num_freqs; i++ ) {
         amp_n[i][j].gain
                    .linearRampToValueAtTime(amplitudes_n[i][j], start + 0.01);
@@ -78,8 +74,7 @@ function nom_trigger(j, start) {
     }
 }
 
-function cont_trigger(j, start) {
-    console.log('j = ',j);
+function cont_trigger(j, start) {             //  ramp up & down for contingency plans
     for( var i=0; i<num_freqs; i++ ) {
         amp_c[i][j].gain
                    .linearRampToValueAtTime(amplitudes_c[i][j], start + 0.01);
@@ -100,7 +95,7 @@ cmpc_player.onbeat = (value) => {
     cont_trigger(value, context.currentTime);
 };
 
-function start_dmpc() {
+function start_dmpc() {                       // start nominal, contingency, or both
     dmpc_player.setBPM(BPM);
     dmpc_player.start();
 }
@@ -115,8 +110,7 @@ function start_cdmpc() {
     cmpc_player.start();
 }
 
-// execute functions when html buttons are clicked
-document.querySelector('#dmpc')
+document.querySelector('#dmpc')               // call fcns when html buttons are clicked
         .addEventListener('click',start_dmpc);
 document.querySelector('#cmpc')
         .addEventListener('click',start_cmpc);
