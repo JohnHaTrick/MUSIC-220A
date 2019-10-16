@@ -12,14 +12,14 @@ load('SIMDATA_cmpc_obsAvoidance.mat');      % load cmpc data
 u_n = optRecord.optVars.u';                 % extract steering commands
 u_c = optRecord.optVars.u_c';
 
-u_n = u_n(:,31:5:end-1);                    % filter down to manageable size
-u_c = u_c(:,31:5:end-1);
+u_n = u_n(:,41:5:end-1);                    % filter down to manageable size
+u_c = u_c(:,41:5:end-1);
 
 u_n = [u_n(2,:); u_n(7:21,:)];              % delete short timesteps
 u_c = [u_c(2,:); u_c(7:21,:)];
 
 % increase density of points: linear interpolation
-interps = 1;
+interps = 0;
 for j = 1:interps
     for i = length(u_n(:,1)) - 1 : -1 : 1
         u_n = [u_n(1:i,:); (u_n(i,:)+u_n(i+1,:))/2; u_n(i+1:end,:)];
@@ -32,7 +32,7 @@ period  = constants.LONG_TS / 2^interps;    % sampling period
 samp_f  = 1/period;                         % sampling frequency
 samp_N  = size(u_n,1);                      % number of samples
 t_rel   = (0:samp_N-1)'*period;             % relative time vector
-up_samp = 3;                                % take this times as many samples
+up_samp = 2;                                % take this times as many samples
 f_dom   = samp_f/samp_N ...
         * (0:1/2^(up_samp-1):(samp_N/2))';  % frequency range
 
