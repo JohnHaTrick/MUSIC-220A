@@ -4,7 +4,7 @@
     <title> HW2: J. Alsterda, Contingency Planning </title>
   </head>
   <body><p>
-    Click for sonified steering command plans from a self-driving car experiment
+    Sonified steering commands from Contingency Model Predictive Control
       <br /><br />
     <button id ="dmpc">
       Play FFT for nominal plan only</button>
@@ -16,11 +16,13 @@
       Play FFT for both plans simulaneously</button>
       <br /><br />
 
-    Two plans are being maintained simulataneously:
+    Two plans are being maintained simulataneously: a nominal and an emergency plan.
       <br />
-    a nominal plan and a an emergency avoidance plan.
+    The sound signals contain the Fourier Tranformed frequency content of each new
       <br />
-    They converge as the emergency occurs.
+    new plan as its published by the path-planning controller. The plans are initially
+      <br />
+    different, but they converge as the emergency occurs.
       <br /><br />
 
     Follow the link below to see Contingency Planning in action:
@@ -35,12 +37,14 @@
       <br />
     Now that I've worked through the coding implementation details, I hope to have
       <br />
-    more time in future assignments to think about composition!
+    more time in future assignments to think about composition.
       <br /><br />
 
     Not sure what the crackling is -- maybe overloading the browser's player?
       <br />
     If playing this data gives your browser problems, I can reduce the size.
+      <br />
+    Duration for each button: ~ 20 seconds.
 
     <script type="module" src="js/main.js">
       </script>
