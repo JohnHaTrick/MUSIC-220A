@@ -23,12 +23,12 @@ const master  = new GainNode(context);        //   and master volume gain
 master.connect(context.destination);
 master.gain.value = 1;
                                               // Parameters
-const BPM        = 60; //* 50;     1Hz!       //   60 sec/min; 50 Hz
+const BPM        = 60*50/10;                  //   60 sec/min; 50 Hz; slowdown factor
 const num_freqs  = frequencies.length;        //   FFT bins
 const num_TS     = amplitudes_n[0].length;    //   how many time-steps in the data
 const j_idxs     = [];                        //   array from 0:num_TS-1
 const duration   = 3;                         //   each mpc plan is 3 sec
-const freq_scale = 10000;                     //   scale FFT freqs to audible range
+const freq_scale = 1000;                      //   scale FFT freqs to audible range
 
 for( var i=0; i<num_freqs; i++ ) {            // Scale frequencies
     frequencies[i] *= freq_scale * frequencies[i];
