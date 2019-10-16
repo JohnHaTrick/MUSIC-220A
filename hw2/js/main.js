@@ -28,7 +28,7 @@ const num_freqs  = frequencies.length;        //   FFT bins
 const num_TS     = amplitudes_n[0].length;    //   how many time-steps in the data
 const j_idxs     = [];                        //   array from 0:num_TS-1
 const duration   = 4;                         //   each mpc plan is 3 sec
-const freq_scale = 1500;                      //   scale FFT freqs to audible range
+const freq_scale = 500;                       //   scale FFT freqs to audible range
 
 for( var i=0; i<num_freqs; i++ ) {            // Scale frequencies
     frequencies[i] *= freq_scale * frequencies[i];
