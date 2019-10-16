@@ -41,22 +41,33 @@ for( var j=0; j<num_TS; j++ ) {
 
 // Construct oscillators
 const osc_n = [];
+const osc_c = [];
 const amp_n = [];
+const amp_c = [];
 for(     var i=0; i<num_freqs; i++ ) {
     osc_n[i] = [];
+    osc_c[i] = [];
     amp_n[i] = [];
+    amp_c[i] = [];
     for( var j=0; j<num_TS;    j++ ) {
         osc_n[i][j] = new OscillatorNode(context);
+        osc_c[i][j] = new OscillatorNode(context);
         amp_n[i][j] = new GainNode(context);
+        amp_c[i][j] = new GainNode(context);
         osc_n[i][j].connect(amp_n[i][j])
                    .connect(context.destination);
+        osc_c[i][j].connect(amp_c[i][j])
+                   .connect(context.destination);
         amp_n[i][j].gain.value      = 0;
+        amp_c[i][j].gain.value      = 0;
         osc_n[i][j].frequency.value = frequencies[i];
+        osc_c[i][j].frequency.value = frequencies[i];
         osc_n[i][j].start();
+        osc_c[i][j].start();
     }
 }
 
-// my trigger function: ramp up and down the gains for timestep j
+// my trigger functions: ramp up and down the gains for timestep j
 function nom_trigger(j, start) {
     console.log('j = ',j);
     for( var i=0; i<num_freqs; i++ ) {
@@ -67,35 +78,47 @@ function nom_trigger(j, start) {
     }
 }
 
+function cont_trigger(j, start) {
+    console.log('j = ',j);
+    for( var i=0; i<num_freqs; i++ ) {
+        amp_c[i][j].gain
+                   .linearRampToValueAtTime(amplitudes_c[i][j], start + 0.01);
+        amp_c[i][j].gain
+                   .linearRampToValueAtTime(0.0,                start + duration);
+    }
+}
+
 // construct TSDataPlayer objects and their trigger functions
 const dmpc_player = new TSDataPlayer(context, j_idxs);
 dmpc_player.onbeat = (value) => {
     value = value || 0;
     nom_trigger(value, context.currentTime);
 };
+const cmpc_player = new TSDataPlayer(context, j_idxs);
+cmpc_player.onbeat = (value) => {
+    value = value || 0;
+    cont_trigger(value, context.currentTime);
+};
 
 function start_dmpc() {
-
-    /*
-    console.log("frequencies:",frequencies);
-    console.log("nominal amplitudes (first freq):",amplitudes_n[0]);
-    console.log("There are this many timesteps:",amplitudes_n[0].length);
-    */
-
-    dmpc_player.setBPM(BPM);             // 60 sec/min; 50 50 Hz
+    dmpc_player.setBPM(BPM);
     dmpc_player.start();
-    
-    //let curr_t = context.currentTime+0.25; // wait an bit to let callbacks start
-    //master_gain.gain
-    //           .setValueAtTime(0, curr_t); // ramp up to gain 0.1
-    //master_gain.gain
-    //           .linearRampToValueAtTime(0.1, curr_t+0.25);
+}
+function start_cmpc() {
+    cmpc_player.setBPM(BPM);
+    cmpc_player.start();
+}
+function start_cdmpc() {
+    dmpc_player.setBPM(BPM);
+    dmpc_player.start();
+    cmpc_player.setBPM(BPM);
+    cmpc_player.start();
 }
 
 // execute functions when html buttons are clicked
 document.querySelector('#dmpc')
         .addEventListener('click',start_dmpc);
-//document.querySelector('#cmpc')
-//        .addEventListener('click',start_cmpc);
-//document.querySelector('#cdmpc')
-//        .addEventListener('click',start_cdmpc);
+document.querySelector('#cmpc')
+        .addEventListener('click',start_cmpc);
+document.querySelector('#cdmpc')
+        .addEventListener('click',start_cdmpc);
