@@ -23,12 +23,12 @@ const master  = new GainNode(context);        //   and master volume gain
 master.connect(context.destination);
 master.gain.value = 1;
                                               // Parameters
-const BPM        = 60*50/10;                  //   60 sec/min; 50 Hz; slowdown factor
+const BPM        = 60*50/50;                  //   60 sec/min; 50 Hz; slowdown factor
 const num_freqs  = frequencies.length;        //   FFT bins
 const num_TS     = amplitudes_n[0].length;    //   how many time-steps in the data
 const j_idxs     = [];                        //   array from 0:num_TS-1
-const duration   = 3;                         //   each mpc plan is 3 sec
-const freq_scale = 1000;                      //   scale FFT freqs to audible range
+const duration   = 4;                         //   each mpc plan is 3 sec
+const freq_scale = 1500;                      //   scale FFT freqs to audible range
 
 for( var i=0; i<num_freqs; i++ ) {            // Scale frequencies
     frequencies[i] *= freq_scale * frequencies[i];
@@ -68,7 +68,7 @@ for(     var i=0; i<num_freqs; i++ ) {
 function nom_trigger(j, start) {              // ramp up & down gain for timestep j
     for( var i=0; i<num_freqs; i++ ) {
         amp_n[i][j].gain
-                   .linearRampToValueAtTime(amplitudes_n[i][j], start + 0.01);
+                   .linearRampToValueAtTime(amplitudes_n[i][j], start + duration/2);
         amp_n[i][j].gain
                    .linearRampToValueAtTime(0.0,                start + duration);
     }
@@ -77,7 +77,7 @@ function nom_trigger(j, start) {              // ramp up & down gain for timeste
 function cont_trigger(j, start) {             //  ramp up & down for contingency plans
     for( var i=0; i<num_freqs; i++ ) {
         amp_c[i][j].gain
-                   .linearRampToValueAtTime(amplitudes_c[i][j], start + 0.01);
+                   .linearRampToValueAtTime(amplitudes_c[i][j], start + duration/2);
         amp_c[i][j].gain
                    .linearRampToValueAtTime(0.0,                start + duration);
     }
