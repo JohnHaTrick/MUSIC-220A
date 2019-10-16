@@ -15,77 +15,87 @@ import TSDataPlayer from './TSDataPlayer.js';
  *   and thus the total sounds becomes more consonant.
 */
 
-const context = new AudioContext();i   // create web audio api context
-const master  = new GainNode(context); //   and master volume gain
+// initialize top-level audio-context objects
+const context = new AudioContext();     // create web audio api context
+const master  = new GainNode(context);  //   and master volume gain
 master.connect(context.destination);
-master.gain.value = 0;
-//let SYNTH_STATE   = "stopped"; DO I NEED THIS?
+master.gain.value = 1;
 
-const start = () => {
-    console.log("print here to debug");
-    console.log(data.freqs);
+// Parameters
+const BPM        = 60; //* 50;     1Hz!       // 60 sec/min; 50 Hz
+const num_freqs  = frequencies.length;        // FFT bins
+const num_TS     = amplitudes_n[0].length;    // how many time-steps in the data
+const j_idxs     = [];                        // array from 0:num_TS-1
+const duration   = 3;                         // each mpc plan is 3 sec
+const freq_scale = 10000;                     // scale FFT freqs to audible range
 
-    // define frequencies, gains, & play periods
-    //const freqs      = data.freqs;  // FFT frequencies for command sequences
-    const multiplier = 2000;        // shift FFT freq to audible range
-    //const amps_n     = data.amps_n; // nominal frequency content
-    //const amps_c     = data.amps_c; // contingency frequency content
-    const t_start    = 0.0;
-    const t_stop     = 1.0;
+// Scale frequencies
+for( var i=0; i<num_freqs; i++ ) {
+    frequencies[i] *= freq_scale * frequencies[i];
+}
 
-    // define containers for oscillator & gain nodes
-    const sins_n = [];
-    const sins_c = [];
-    const amps_n = [];
-    const amps_c = [];
+// fill j idx array
+for( var j=0; j<num_TS; j++ ) {
+    j_idxs.push(j);
+}
 
-    data.freqs.forEach((freq, idx) => {
-        // create oscillator & gain nodes
-        sins_n[idx] = new OscillatorNode(context);
-        sins_c[idx] = new OscillatorNode(context);
-        amps_n[idx] = new GainNode(context);
-        amps_c[idx] = new GainNode(context);
+// Construct oscillators
+const osc_n = [];
+const amp_n = [];
+for(     var i=0; i<num_freqs; i++ ) {
+    osc_n[i] = [];
+    amp_n[i] = [];
+    for( var j=0; j<num_TS;    j++ ) {
+        osc_n[i][j] = new OscillatorNode(context);
+        amp_n[i][j] = new GainNode(context);
+        osc_n[i][j].connect(amp_n[i][j])
+                   .connect(context.destination);
+        amp_n[i][j].gain.value      = 0;
+        osc_n[i][j].frequency.value = frequencies[i];
+        osc_n[i][j].start();
+    }
+}
 
-        // set freq and gain values
-        sins_n[idx].frequency.value = freq * multiplier;
-        sins_c[idx].frequency.value = freq * multiplier;
-        amps_n[idx].gain.value      = data.amps_n[idx];
-        amps_c[idx].gain.value      = data.amps_c[idx];
+// my trigger function: ramp up and down the gains for timestep j
+function nom_trigger(j, start) {
+    console.log('j = ',j);
+    for( var i=0; i<num_freqs; i++ ) {
+        amp_n[i][j].gain
+                   .linearRampToValueAtTime(amplitudes_n[i][j], start + 0.01);
+        amp_n[i][j].gain
+                   .linearRampToValueAtTime(0.0,                start + duration);
+    }
+}
 
-        // connect osc to gain to dest
-        sins_n[idx].connect(amps_n[idx]);
-        sins_c[idx].connect(amps_c[idx]);
-        amps_n[idx].connect(context.destination);
-        amps_c[idx].connect(context.destination);
-
-        // start & stop tones
-        sins_n[idx].start(t_start);
-        sins_c[idx].start(t_start);
-        sins_n[idx].stop( t_stop)
-        sins_c[idx].stop( t_stop)
-    });
-};
-
-const dmpc_player = new TSDataPlayer(context, data);
-dmpc.onbeat = (value, start, duration) => {
+// construct TSDataPlayer objects and their trigger functions
+const dmpc_player = new TSDataPlayer(context, j_idxs);
+dmpc_player.onbeat = (value) => {
     value = value || 0;
-
+    nom_trigger(value, context.currentTime);
 };
 
 function start_dmpc() {
-    dmpc_player.setBPM(60*50);             // 60 sec/min; 50 50 Hz
+
+    /*
+    console.log("frequencies:",frequencies);
+    console.log("nominal amplitudes (first freq):",amplitudes_n[0]);
+    console.log("There are this many timesteps:",amplitudes_n[0].length);
+    */
+
+    dmpc_player.setBPM(BPM);             // 60 sec/min; 50 50 Hz
     dmpc_player.start();
-    let curr_t = context.currentTime+0.25; // wait an bit to let callbacks start
-    master_gain.gain
-               .setValueAtTime(0, curr_t); // ramp up to gain 0.1
-    master_gain.gain
-               .linearRampToValueAtTime(0.1, curr_t+0.25);
+    
+    //let curr_t = context.currentTime+0.25; // wait an bit to let callbacks start
+    //master_gain.gain
+    //           .setValueAtTime(0, curr_t); // ramp up to gain 0.1
+    //master_gain.gain
+    //           .linearRampToValueAtTime(0.1, curr_t+0.25);
 }
 
 // execute functions when html buttons are clicked
 document.querySelector('#dmpc')
         .addEventListener('click',start_dmpc);
-document.querySelector('#cmpc')
-        .addEventListener('click',start_cmpc);
-document.querySelector('#cdmpc')
-        .addEventListener('click',start_cdmpc);
+//document.querySelector('#cmpc')
+//        .addEventListener('click',start_cmpc);
+//document.querySelector('#cdmpc')
+//        .addEventListener('click',start_cdmpc);

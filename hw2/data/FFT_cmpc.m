@@ -81,7 +81,7 @@ fprintf(fileID, '\nexport default amplitudes_n');
 fclose(fileID);
 
 fileID = fopen('contingency-amp-data.js','w'); % save contingency amplitudes
-fprintf(fileID,strcat('export const amplitudes_n = ', ...
+fprintf(fileID,strcat('export const amplitudes_c = ', ...
                       jsonencode(amps_c_rnd_no0) ));
 fprintf(fileID, '\nexport default amplitudes_c');
 fclose(fileID);

@@ -79,6 +79,7 @@ class TSDataPlayer {
    * @public
    */
   start() {
+    this._context.resume();
     if (this._state === 'stopped') {
       this._state = 'running';
       this._callback();
