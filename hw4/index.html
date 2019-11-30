@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>HW4: J. Alsterda, a synthesizer</title>
+  </head>
+  <body>
+    <h1>A C-major scale synthesizer with tremolo</h1>
+    <p>
+      Try your a,b,c,d,e,f,g keys to play a C scale
+      <br /><br />
+      3 Generator params: frequency, gain, oscillator type
+      <br /><br />
+      3 Effect params: tremolo speed and depth; echo delay and sustain
+      <br />
+    </p>
+    <div id='ui-panel'>
+      <label for="speed">Tremolo speed: </label>
+      <input  id="speed" type="range" min="0" max="10" value="0">
+      <br />
+      <label for="depth">Tremolo depth: </label>
+      <input  id="depth" type="range" min="0" max="10" value="0">
+      <br />
+      <label for="delay">Echo delay:     </label>
+      <input  id="delay" type="range" min="0" max="10" value="0">
+      <br />
+      <label for="sustain">Echo sustain:   </label>
+      <input  id="sustain" type="range" min="0" max="10" value="0">
+    </div>
+    <br /><img src="synth-diagram.jpg" alt="synth-diagram" style="width:500px;height:300px;">
+    <br /><p id="date"></p>
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
